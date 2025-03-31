@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using PlatformService.Data;
 using PlatformService.DTOs;
 using PlatformService.Models;
+using PlatformService.SyncDataServices.Http;
+using System.Threading.Tasks;
 
 namespace PlatformService.Controllers
 {
@@ -14,49 +16,51 @@ namespace PlatformService.Controllers
     {
         private readonly IPlatformRepository _context;
         private readonly IMapper _mapper;
+        private readonly ICommandDataClient _commandData;
 
-        public PlatformsController(IPlatformRepository context, IMapper mapper)
+        public PlatformsController(IPlatformRepository context, IMapper mapper,ICommandDataClient commandData)
         {
             _context = context;
             _mapper = mapper;
+            _commandData = commandData;
         }
 
         [HttpGet]
         public ActionResult<IEnumerable<PlatformReadDto>> GetPlatformDto()
         {
             var result = _context.GetAllPlatforms();
-            // Use Mapster to map the collection correctly
             var platformReadDtos = _mapper.Map<IEnumerable<PlatformReadDto>>(result);
-            return Ok(platformReadDtos); // Return a successful response with the mapped data
+            return Ok(platformReadDtos); 
         }
 
         [HttpGet("{id}",Name = "GetPlatformById")]
         public ActionResult<PlatformReadDto> GetPlatformById(int id)
-        {
-            // Retrieve the platform from the repository
+        { 
             Platform result = _context.GetPlatformById(id);
-
-            // If no platform is found, return 404 Not Found
             if (result == null)
             {
-                return NotFound();  // 404 Not Found response
+                return NotFound();  
             }
-
-            // Map the result to PlatformReadDto
             var platformReadDto = _mapper.Map<PlatformReadDto>(result);
-
-            // Return the mapped DTO with a 200 OK response
-            return Ok(platformReadDto);  // 200 OK response with the data
+            return Ok(platformReadDto); 
         }
 
         [HttpPost]
-        public ActionResult CreatePlatform(PlatformCreateDto plat)
+        public async Task<ActionResult> CreatePlatform(PlatformCreateDto plat)
         {
             var newPlatform = _mapper.Map<Platform>(plat);
             _context.CreatePlatform(newPlatform);
             _context.SaveChanges();
 
             var platformReadDto = _mapper.Map<PlatformReadDto>(newPlatform);
+
+            try
+            {
+                await _commandData.SendPlatformToCommand(platformReadDto);
+            }
+            catch (Exception ex) { 
+              Console.WriteLine(ex);
+            }
 
             return CreatedAtRoute(nameof(GetPlatformById),new { Id = platformReadDto.Id},platformReadDto);
         }

@@ -5,6 +5,7 @@ using Mapster;
 using MapsterMapper;
 using PlatformService.DTOs;
 using PlatformService.Models;
+using PlatformService.SyncDataServices.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,9 @@ builder.Services.AddSingleton<IMapper, Mapper>();
 var config = new TypeAdapterConfig();
 config.NewConfig<Platform, PlatformReadDto>();  // Mapping between Platform model and PlatformReadDto
 builder.Services.AddSingleton(config);  // Add the configuration to DI
+
+//Register Http Client via client factory
+builder.Services.AddHttpClient<ICommandDataClient,CommandDataClient>();
 
 var app = builder.Build();
 

@@ -2,19 +2,12 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>3aac637a-3d38-4fb5-b2e3-f526f58394f1</UserSecretsId>
+    <UserSecretsId>4e0cbfdf-0de5-4458-948b-6cce15b75e5c</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Content Remove="appsettings.Production.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="appsettings.Production.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Mapster" Version="7.4.0" />
