@@ -17,7 +17,23 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 //Add datbase context
-builder.Services.AddDbContext<AppDbContext>(opt => opt.UseInMemoryDatabase("InMem"));
+// Add database context for MSSQL Server (production or other environments)
+if (builder.Environment.IsDevelopment())
+{
+    // Use InMemory database for Development
+    builder.Services.AddDbContext<AppDbContext>(opt =>
+        opt.UseInMemoryDatabase("InMem"));
+}
+else
+{
+    // Use SQL Server for Production or Staging environments
+    builder.Services.AddDbContext<AppDbContext>(opt =>
+    {
+        var connectionString = builder.Configuration.GetConnectionString("PlatformDb");
+        opt.UseSqlServer(connectionString);
+    });
+}
+
 
 //Register Repositories for dependency injection
 builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
@@ -48,6 +64,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-PrepDb.prepPopulation(app);
+PrepDb.prepPopulation(app,app.Environment.IsProduction());
 
 app.Run();
