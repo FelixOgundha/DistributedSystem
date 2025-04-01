@@ -6,6 +6,7 @@ using MapsterMapper;
 using PlatformService.DTOs;
 using PlatformService.Models;
 using PlatformService.SyncDataServices.Http;
+using PlatformService.AsyncDataServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +38,7 @@ else
 
 //Register Repositories for dependency injection
 builder.Services.AddScoped<IPlatformRepository, PlatformRepository>();
+builder.Services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
 // Register Mapster
 builder.Services.AddSingleton<IMapper, Mapper>();

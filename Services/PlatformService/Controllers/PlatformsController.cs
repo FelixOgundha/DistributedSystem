@@ -2,6 +2,7 @@
 using MapsterMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PlatformService.AsyncDataServices;
 using PlatformService.Data;
 using PlatformService.DTOs;
 using PlatformService.Models;
@@ -17,12 +18,18 @@ namespace PlatformService.Controllers
         private readonly IPlatformRepository _context;
         private readonly IMapper _mapper;
         private readonly ICommandDataClient _commandData;
+        private readonly IMessageBusClient _messageBusClient;
 
-        public PlatformsController(IPlatformRepository context, IMapper mapper,ICommandDataClient commandData)
+        public PlatformsController(
+            IPlatformRepository context, 
+            IMapper mapper,
+            ICommandDataClient commandData,
+            IMessageBusClient messageBusClient)
         {
             _context = context;
             _mapper = mapper;
             _commandData = commandData;
+            _messageBusClient = messageBusClient;
         }
 
         [HttpGet]
@@ -62,6 +69,18 @@ namespace PlatformService.Controllers
               Console.WriteLine(ex);
             }
 
+            //Send Async Message
+            try
+            {
+                var platfomPublishedDto = _mapper.Map<PlatformPublishedDto>(platformReadDto);
+                platfomPublishedDto.Event = "Platform Published";
+
+                _messageBusClient.PublishNewPlatform(platfomPublishedDto);
+            }
+            catch (Exception ex)
+            {
+
+            }
             return CreatedAtRoute(nameof(GetPlatformById),new { Id = platformReadDto.Id},platformReadDto);
         }
 
