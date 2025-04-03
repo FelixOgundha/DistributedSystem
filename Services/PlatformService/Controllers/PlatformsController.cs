@@ -30,8 +30,8 @@ namespace PlatformService.Controllers
             return Ok(platformReadDtos); // Return a successful response with the mapped data
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<PlatformReadDto> GetPlatformDto(int id)
+        [HttpGet("{id}",Name = "GetPlatformById")]
+        public ActionResult<PlatformReadDto> GetPlatformById(int id)
         {
             // Retrieve the platform from the repository
             Platform result = _context.GetPlatformById(id);
@@ -56,7 +56,9 @@ namespace PlatformService.Controllers
             _context.CreatePlatform(newPlatform);
             _context.SaveChanges();
 
-            return Created();
+            var platformReadDto = _mapper.Map<PlatformReadDto>(newPlatform);
+
+            return CreatedAtRoute(nameof(GetPlatformById),new { Id = platformReadDto.Id},platformReadDto);
         }
 
     }
