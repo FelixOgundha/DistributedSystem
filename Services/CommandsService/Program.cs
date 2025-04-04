@@ -1,5 +1,6 @@
 using CommandsService.Data;
 using CommandsService.Dto;
+using CommandsService.EventProcessing;
 using CommandsService.Models;
 using Mapster;
 using MapsterMapper;
@@ -30,6 +31,8 @@ var config = new TypeAdapterConfig();
 config.NewConfig<Platform, PlatformReadDto>();  
 config.NewConfig<Command, CommandReadDto>();  
 config.NewConfig<Command, CommandCreateDto>();  
+
+builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 
 builder.Services.AddSingleton(config);  // Add the configuration to DI
 
