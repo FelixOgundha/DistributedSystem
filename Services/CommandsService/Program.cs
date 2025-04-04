@@ -1,3 +1,4 @@
+using CommandsService.AsyncDataServices;
 using CommandsService.Data;
 using CommandsService.Dto;
 using CommandsService.EventProcessing;
@@ -35,6 +36,8 @@ config.NewConfig<Command, CommandCreateDto>();
 builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 
 builder.Services.AddSingleton(config);  // Add the configuration to DI
+
+builder.Services.AddHostedService<MessageBusSubscriber>();
 
 var app = builder.Build();
 
