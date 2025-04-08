@@ -7,6 +7,7 @@ using PlatformService.DTOs;
 using PlatformService.Models;
 using PlatformService.SyncDataServices.Http;
 using PlatformService.AsyncDataServices;
+using PlatformService.SyncDataServices.Grpc;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,9 @@ builder.Services.AddSingleton(config);  // Add the configuration to DI
 //Register Http Client via client factory
 builder.Services.AddHttpClient<ICommandDataClient,CommandDataClient>();
 
+//Register GRPC
+builder.Services.AddGrpc();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -65,6 +69,13 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapGrpcService<GrpcPlatformService>();
+
+app.MapGet("/protos/platforms.proto", async context =>
+{
+    await context.Response.WriteAsync(File.ReadAllText("Protos/platfroms.proto"));
+});
 
 PrepDb.prepPopulation(app,app.Environment.IsProduction());
 

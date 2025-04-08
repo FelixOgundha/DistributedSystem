@@ -13,10 +13,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="appsettings.Production.json" />
+    <None Remove="Protos\platforms.proto" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="appsettings.Production.json" />
+    <Compile Include="Protos\platforms.proto" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.ProtocolBuffers" Version="2.4.1.555" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.70.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.71.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Mapster" Version="7.4.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.3">
@@ -35,4 +47,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+<ItemGroup>
+	<Protobuf Include="Protos\platforms.proto" GrpcServices="Server" />
+</ItemGroup>
 </Project>
