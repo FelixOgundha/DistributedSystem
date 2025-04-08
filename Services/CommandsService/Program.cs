@@ -3,6 +3,7 @@ using CommandsService.Data;
 using CommandsService.Dto;
 using CommandsService.EventProcessing;
 using CommandsService.Models;
+using CommandsService.SyncDataService.Grpc;
 using Mapster;
 using MapsterMapper;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 
 //Register Repositories for dependency injection
 builder.Services.AddScoped<ICommandRepo, CommandRepo>();
+builder.Services.AddScoped<IPlatformDataClient, PlatformDataClient>();
 
 // Register the mapping configuration for Mapster
 var config = new TypeAdapterConfig();

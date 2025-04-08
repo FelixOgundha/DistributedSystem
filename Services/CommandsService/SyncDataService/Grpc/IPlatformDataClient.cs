@@ -2,7 +2,7 @@
 
 namespace CommandsService.SyncDataService.Grpc
 {
-    public interface IPlatfromDataClient
+    public interface IPlatformDataClient
     {
         IEnumerable<Platform> ReturnAllPlatfroms();
      }
